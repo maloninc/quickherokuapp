@@ -49,7 +49,16 @@ def stop_command
 	sh %Q|docker rm $(docker ps -a -q)|
 end
 
+def dns
+    resolver = '/etc/resolv.conf'
+    return "0.0.0.0" if !File.exist?(resolver)
+    open(resolver).each_line do |line|
+        if line.include?('nameserver')
+            return line.split(' ')[1].chomp
+        end
+    end
+end
 
 def shell_command(cmd)
-	sh %Q|docker run -it -v "#{Dir.pwd}":/app/src -p 9292:9291 #{IMAGE_NAME} #{cmd}|
+	sh %Q|docker run --dns #{dns} -it -v "#{Dir.pwd}":/app/src -p 9292:9291 #{IMAGE_NAME} #{cmd}|
 end
