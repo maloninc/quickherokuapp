@@ -3,15 +3,15 @@ IMAGE_NAME = "my-cedar-app"
 task :default => :run_server
 
 task :run_server do
-	stop_command
 	build_command
 	shell_command %Q|bundle exec ". ./env; rackup --host 0.0.0.0 --port 9291"|
+    stop_command
 end
 
 task :run_job do
-	stop_command
 	build_command
 	shell_command %Q|bundle exec ". ./env; ruby app.rb"|
+    stop_command
 end
 
 task :build do
@@ -24,6 +24,7 @@ end
 
 task :shell do
 	sh %Q|docker run -it -v "#{Dir.pwd}":/app/src #{IMAGE_NAME} bash|
+    stop_command
 end
 
 task :restart do
